@@ -10,7 +10,5 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ComputationRequestDto {
-
     private int input;
-
 }
