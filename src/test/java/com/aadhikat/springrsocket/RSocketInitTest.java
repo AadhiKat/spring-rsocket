@@ -18,7 +18,7 @@ import reactor.test.StepVerifier;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RSocketInitTest {
 
-	//As usual, we'll be using RSocketClient,coming from rsocket.core to call the server from the client. But spring boot puts a wrapper around that.
+	// As usual, we'll be using RSocketClient,coming from rsocket.core to call the server from the client. But spring boot puts a wrapper around that.
 	// It is RSocketRequester which contains RSocket client.
 	// It provides a builder, which could be used for Autowiring.
 
