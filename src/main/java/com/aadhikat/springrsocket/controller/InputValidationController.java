@@ -1,6 +1,7 @@
 package com.aadhikat.springrsocket.controller;
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Mono;
@@ -47,6 +48,9 @@ public class InputValidationController {
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("cannot be > 30")));
     }
 
-
+    @MessageExceptionHandler
+    public Mono<Integer> handleException (Exception e) {
+        return Mono.just(-1);
+    }
 
 }
