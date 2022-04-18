@@ -18,8 +18,11 @@ public class ConnectionManagerTest {
     @Test
     public void connectionTest() throws InterruptedException {
 
-        RSocketRequester requester1 = this.builder.transport(TcpClientTransport.create("localhost", 6565));
-        RSocketRequester requester2 = this.builder.transport(TcpClientTransport.create("localhost", 6565));
+        RSocketRequester requester1 = this.builder
+                .transport(TcpClientTransport.create("localhost", 6565));
+        RSocketRequester requester2 = this.builder
+                .setupRoute("math.events.connection ")
+                .transport(TcpClientTransport.create("localhost", 6565));
 
         requester1.route("math.service.print").data(new ComputationRequestDto(5)).send().subscribe(); // Since connection is lazy, it will make the connection only when we hit the API.
         requester2.route("math.service.print").data(new ComputationRequestDto(5)).send().subscribe(); // Since connection is lazy, it will make the connection only when we hit the API.
