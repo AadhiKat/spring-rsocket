@@ -1,5 +1,7 @@
 package com.aadhikat.springrsocket;
 
+import ch.qos.logback.core.net.server.Client;
+import com.aadhikat.springrsocket.dto.ClientConnectionRequest;
 import com.aadhikat.springrsocket.dto.ComputationRequestDto;
 import com.aadhikat.springrsocket.dto.ComputationResponseDto;
 import io.rsocket.transport.netty.client.TcpClientTransport;
@@ -26,8 +28,13 @@ public class ConnectionSetupTest {
 
     @BeforeAll
     public void setup() {
+
+        ClientConnectionRequest request = new ClientConnectionRequest();
+        request.setClientId("order-service");
+        request.setSecretKey("password");
         this.requester = this
                 .builder
+                .setupData(request)
                 .transport(TcpClientTransport.create("localhost" , 6565));
     }
 
