@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+
 @Service
 public class MathService {
     //ff
@@ -21,7 +23,10 @@ public class MathService {
 
     //rs
     public Flux<ComputationResponseDto> tableStream(ComputationRequestDto requestDto) {
-        return Flux.range(1, 10).map(i -> new ComputationResponseDto(requestDto.getInput(), requestDto.getInput() * i));
+        return Flux
+                .range(1, 1000)
+                .delayElements(Duration.ofSeconds(1))
+                .map(i -> new ComputationResponseDto(requestDto.getInput(), requestDto.getInput() * i));
     }
 
     //rc
