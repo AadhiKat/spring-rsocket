@@ -22,7 +22,9 @@ public class BatchJobController {
                 .delayElement(Duration.ofSeconds(10))
                 .map(i -> i * i * i)
                 .flatMap(i -> requester.route("batch.job.response")
-                        .data(i).send())
+                        .data(i)
+                        .send()
+                )
                 .subscribe();
     }
 }
