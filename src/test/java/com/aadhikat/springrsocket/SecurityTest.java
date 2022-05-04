@@ -5,7 +5,9 @@ import com.aadhikat.springrsocket.dto.ComputationResponseDto;
 import io.rsocket.RSocket;
 import io.rsocket.metadata.WellKnownMimeType;
 import io.rsocket.transport.netty.client.TcpClientTransport;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.rsocket.RSocketRequester;
@@ -16,26 +18,34 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SecurityTest {
+
+    private RSocketRequester requester;
+    private final MimeType mimeType = MimeTypeUtils.parseMimeType(WellKnownMimeType.MESSAGE_RSOCKET_AUTHENTICATION.getString());
 
     @Autowired
     private RSocketRequester.Builder builder;
 
+    @BeforeAll
+    public void connectionSetup() {
+
+        UsernamePasswordMetadata metadata = new UsernamePasswordMetadata("client" , "password");
+
+        this.requester = this.builder
+                .setupMetadata(metadata , mimeType)
+                .transport(TcpClientTransport.create("localhost" , 6565));
+
+    }
+
     @Test
     public void requestResponse() {
 
-        UsernamePasswordMetadata metadata = new UsernamePasswordMetadata("client" , "password");
-        MimeType mimeType = MimeTypeUtils.parseMimeType(WellKnownMimeType.MESSAGE_RSOCKET_AUTHENTICATION.getString());
+        UsernamePasswordMetadata metadata = new UsernamePasswordMetadata("user" , "password");
 
-
-        // This won't work if server does not have a decoder for the MimeType
-        RSocketRequester requester = this.builder
-                .setupMetadata(metadata , mimeType)
-                .transport(TcpClientTransport.create("localhost" , 6565));
-        // Here, in the RSocketrequester instance, you'll be seeing rsocket, rsocketClient instances which comes from io.rsocket.core.
-        // But you'll be using the route method, since you have already created the controller with messagemapping endpoints.
         Mono<ComputationResponseDto> mono = requester
                 .route("math.service.secured.square")
+                .metadata(metadata, mimeType)
                 .data(new ComputationRequestDto(5))
                 .retrieveMono(ComputationResponseDto.class)
                 .doOnNext(System.out::println);
