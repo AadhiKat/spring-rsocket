@@ -36,7 +36,9 @@ public class RSocketSecurityConfig {
                 .authorizePayload(
                         authorize -> authorize
                                 .setup().hasRole("TRUSTED_CLIENT")
-                                .anyRequest().hasRole("USER")
+                                .route("*.*.*.table").hasRole("ADMIN")
+                                .route("math.service.secured.square").hasRole("USER")
+                                .anyRequest().denyAll()
                 ).build();
     }
 }

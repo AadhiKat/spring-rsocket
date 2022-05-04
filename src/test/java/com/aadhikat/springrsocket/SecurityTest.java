@@ -14,6 +14,7 @@ import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.security.rsocket.metadata.UsernamePasswordMetadata;
 import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -51,5 +52,21 @@ public class SecurityTest {
                 .doOnNext(System.out::println);
 
         StepVerifier.create(mono).expectNextCount(1).verifyComplete();
+    }
+
+    @Test
+    public void requestStream() {
+
+        UsernamePasswordMetadata metadata = new UsernamePasswordMetadata("admin" , "password");
+
+        Flux<ComputationResponseDto> flux = this.requester
+                .route("math.service.secured.table")
+                .metadata(metadata, mimeType)
+                .data(new ComputationRequestDto(5))
+                .retrieveFlux(ComputationResponseDto.class)
+                .doOnNext(System.out::println)
+                .take(3);
+
+        StepVerifier.create(flux).expectNextCount(3).verifyComplete();
     }
 }
