@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.rsocket.RSocketStrategies;
 import org.springframework.messaging.rsocket.annotation.support.RSocketMessageHandler;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.rsocket.EnableRSocketSecurity;
 import org.springframework.security.config.annotation.rsocket.RSocketSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,6 +17,7 @@ import org.springframework.security.rsocket.metadata.SimpleAuthenticationEncoder
 
 @Configuration
 @EnableRSocketSecurity
+@EnableReactiveMethodSecurity
 public class RSocketSecurityConfig {
 
     @Bean
@@ -50,9 +52,9 @@ public class RSocketSecurityConfig {
                 .authorizePayload(
                         authorize -> authorize
                                 .setup().hasRole("TRUSTED_CLIENT")
-                                .route("*.*.*.table").hasRole("ADMIN")
-                                .route("math.service.secured.square").hasRole("USER")
-                                .anyRequest().denyAll()
+                                //.route("*.*.*.table").hasRole("ADMIN")
+                                //.route("math.service.secured.square").hasRole("USER")
+                                .anyRequest().authenticated()
                 ).build();
     }
 }
